@@ -1,0 +1,51 @@
+# Build results
+*.obj
+*.exe
+*.dll
+*.lib
+*.pdb
+*.idb
+*.ipch
+*.iobj
+*.ilk
+*.log
+
+# Precompiled Headers
+*.pch
+
+# Visual Studio cache and temporary files
+*.tlog/
+*.lastbuildstate
+*.suo
+*.sdf
+*.VC.db
+*.VC.opendb
+*.opensdf
+*.user
+*.userosscache
+*.dbmdl
+*.exe.recipe
+
+# Visual Studio directories
+/.vs/
+/Debug/
+/Release/
+/x64/
+/x86/
+/ipch/
+/out/
+
+# CMake-generated files (if applicable)
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Backup files
+*~ 
+*.bak
+*.tmp
+
+# OS-specific
+.DS_Store
+Thumbs.db
