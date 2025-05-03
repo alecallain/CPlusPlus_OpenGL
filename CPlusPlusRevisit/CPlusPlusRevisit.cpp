@@ -1,7 +1,10 @@
 // CPlusPlusRevisit.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
+
+using namespace std;
 
 int main()
 {
