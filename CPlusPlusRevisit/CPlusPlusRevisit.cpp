@@ -4,17 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-using namespace std;
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-
-void processInput(GLFWwindow* window) {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, true);
-    }
-}
+#include "utils.h"
 
 int main()
 {
@@ -42,6 +32,56 @@ int main()
         return -1;
     }
 
+    float vertices[] = {
+        -0.5f, -0.5f, 0.0f,
+        0.5f, -0.5f, 0.0f,
+        0.0f, 0.5f, 0.0f
+    };
+
+    // Vertex Buffer Objects
+    unsigned int VBO;
+    glGenBuffers(1, &VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Vertex Shader
+    unsigned int vertexShader;
+    vertexShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+    glCompileShader(vertexShader);
+
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success) {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR: Shader Vertex compilation failed\n" << infoLog << std::endl;
+    }
+
+    // Fragment Shader
+    unsigned int fragmentShader;
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+
+    // Shader program
+    unsigned int shaderProgram;
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, fragmentShader);
+    glAttachShader(shaderProgram, vertexShader);
+    glLinkProgram(shaderProgram);
+
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+    }
+
+    glUseProgram(shaderProgram);
+
+    // Once binded to the program, not needed anymore
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
     // Main render loop
     while (!glfwWindowShouldClose(window)) {
         // input
@@ -56,9 +96,19 @@ int main()
         glfwPollEvents();
     }
 
+    // Officially end program
     glfwTerminate();
-
     return 0;
+}
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow* window) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
