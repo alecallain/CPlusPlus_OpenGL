@@ -1,4 +1,4 @@
-// CPlusPlusRevisit.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// This file contains the 'main' function.Program execution begins and ends here.
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -14,6 +14,10 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
+#ifdef __APPLE__
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+
     // Configuring GLFW window
     GLFWwindow* window = glfwCreateWindow(800, 600, "3D Modeling", NULL, NULL);
     if (window == NULL)
@@ -23,9 +27,7 @@ int main()
         return -1;
     }
     glfwMakeContextCurrent(window);
-
-    // Accounts for window resizing
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); // Accounts for window resizing
 
     // Load GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -49,7 +51,7 @@ int main()
         std::cout << "ERROR: Shader Vertex compilation failed\n" << infoLog << std::endl;
     }
 
-    // Fragment Shader
+    // Fragment/Triangle Shader
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
@@ -84,22 +86,20 @@ int main()
     //};
 
     float vertices[] = {
-        // first triangle
         0.5f, 0.5f, 0.0f, // top right
         0.5f, -0.5f, 0.0f, // bottom right
         -0.5f, -0.5f, 0.0f, // bottom left
         -0.5f, 0.5f, 0.0f //top left
     };
 
+    // use for intersecting triangles
     unsigned int indices[] = {
         0, 1, 3, // first triangle
         1, 2, 3 // second
     };
 
     // Vertex Buffer Objects, Vertex Array Objects and Element Buffer Objects
-    unsigned int VBO;
-    unsigned int VAO;
-    unsigned int EBO;
+    unsigned int VAO, VBO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
