@@ -24,6 +24,7 @@
     <ProjectGuid>{294bf948-8965-4113-80c6-75330a64907d}</ProjectGuid>
     <RootNamespace>CPlusPlusRevisit</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>CPlusPlus_OpenGL</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -131,7 +132,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\Lib\glad\src\glad.c" />
-    <ClCompile Include="CPlusPlusRevisit.cpp" />
+    <ClCompile Include="CPlusPlus_OpenGL.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils.h" />

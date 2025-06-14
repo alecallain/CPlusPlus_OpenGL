@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CPlusPlusRevisit.cpp">
+    <ClCompile Include="CPlusPlus_OpenGL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\Lib\glad\src\glad.c">
