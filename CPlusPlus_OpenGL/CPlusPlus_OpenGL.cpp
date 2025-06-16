@@ -5,6 +5,10 @@
 #include <iostream>
 
 #include "utils.h"
+#include "Shader.h"
+
+const unsigned int SCREEN_WIDTH = 800;
+const unsigned int SCREEN_HEIGHT = 600;
 
 int main()
 {
@@ -19,7 +23,7 @@ int main()
 #endif
 
     // Configuring GLFW window
-    GLFWwindow* window = glfwCreateWindow(800, 600, "3D Modeling", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "3D Modeling", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -51,7 +55,7 @@ int main()
         std::cout << "ERROR: Shader Vertex compilation failed\n" << infoLog << std::endl;
     }
 
-    // Fragment/Triangle Shader
+    // Fragment Shader
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
@@ -62,7 +66,7 @@ int main()
         std::cout << "ERROR: Shader Fragment compilation failed\n" << infoLog << std::endl;
     }
 
-    // Shader program
+    // link shaders
     unsigned int shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, fragmentShader);
     glAttachShader(shaderProgram, vertexShader);
@@ -79,30 +83,30 @@ int main()
     glDeleteShader(fragmentShader);
 
     // Set up vertex data
-    //float vertices[] = { // One triangle
-    //    -0.5f, -0.5f, 0.0f, // bottom left
+    float vertices[] = { // One triangle
+        -0.5f, -0.5f, 0.0f, // bottom left
+        0.5f, -0.5f, 0.0f, // bottom right
+        0.0f, 0.5f, 0.0f // top
+    };
+
+    //float vertices[] = {
+    //    0.5f, 0.5f, 0.0f, // top right
     //    0.5f, -0.5f, 0.0f, // bottom right
-    //    0.0f, 0.5f, 0.0f // top
+    //    -0.5f, -0.5f, 0.0f, // bottom left
+    //    -0.5f, 0.5f, 0.0f //top left
     //};
 
-    float vertices[] = {
-        0.5f, 0.5f, 0.0f, // top right
-        0.5f, -0.5f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f, // bottom left
-        -0.5f, 0.5f, 0.0f //top left
-    };
-
     // use for intersecting triangles
-    unsigned int indices[] = {
-        0, 1, 3, // first triangle
-        1, 2, 3 // second
-    };
+    //unsigned int indices[] = {
+    //    0, 1, 3, // first triangle
+    //    1, 2, 3 // second
+    //};
 
     // Vertex Buffer Objects, Vertex Array Objects and Element Buffer Objects
-    unsigned int VAO, VBO, EBO;
+    unsigned int VAO, VBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    //glGenBuffers(1, &EBO);
 
     // Bind vertex array object
     glBindVertexArray(VAO);
@@ -112,8 +116,8 @@ int main()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // Copy index arry in element buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Set vertex attribute pointers
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -122,7 +126,7 @@ int main()
     // can safely unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    //glBindVertexArray(0);
 
     // Uncomment to draw in wireframes
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -139,9 +143,16 @@ int main()
 
         // run program and draw object
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        // update uniform color
+        double timeValue = glfwGetTime();
+        float greenValue = static_cast<float>(sin(timeValue) / 2.0 + 0.5);
+        int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+
+        //glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         //glBindVertexArray(0);
 
         // refresh
@@ -152,7 +163,7 @@ int main()
     // deallocates all resources
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    //glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
 
     // Officially end program
