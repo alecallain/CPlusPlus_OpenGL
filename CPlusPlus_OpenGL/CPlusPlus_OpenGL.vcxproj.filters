@@ -30,4 +30,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="3.3.vertex.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="3.3.fragment.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
