@@ -133,14 +133,21 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\Lib\glad\src\glad.c" />
     <ClCompile Include="CPlusPlus_OpenGL.cpp" />
+    <ClCompile Include="image_loading.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="3.3.fragment.glsl" />
     <None Include="3.3.vertex.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="container.jpg" />
+    <Image Include="wall.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
