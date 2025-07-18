@@ -8,6 +8,10 @@
 #include "Shader.h"
 #include "stb_image.h"
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 
@@ -94,20 +98,20 @@ int main()
     //     0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top 
     //};
 
-    float vertices[] = { // one rectangle
-        // positions          // colors           // texture coordinates
-         0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-         0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-        -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
-    };
+    //float vertices[] = { // one rectangle
+    //    // positions          // colors           // texture coordinates
+    //     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+    //     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+    //    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+    //    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left 
+    //};
 
     // Set up texture coordinates
-    float textureCoordinates[] = {
-        0.0f, 0.0f, // lower left corner
-        1.0f, 0.0f, // lower right corner
-        0.5f, 1.0f // top center
-    };
+    //float textureCoordinates[] = {
+    //    0.0f, 0.0f, // lower left corner
+    //    1.0f, 0.0f, // lower right corner
+    //    0.5f, 1.0f // top center
+    //};
 
     //float vertices[] = { // multiple triangles
     //    0.5f, 0.5f, 0.0f, // top right
@@ -116,7 +120,14 @@ int main()
     //    -0.5f, 0.5f, 0.0f //top left
     //};
 
-    // use for intersecting triangles
+    float vertices[] = {
+        // positions          // texture coords
+         0.5f,  0.5f, 0.0f,   1.0f, 1.0f, // top right
+         0.5f, -0.5f, 0.0f,   1.0f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, // bottom left
+        -0.5f,  0.5f, 0.0f,   0.0f, 1.0f  // top left 
+    };
+
     unsigned int indices[] = {
         0, 1, 3, // first triangle
         1, 2, 3  // second triangle
@@ -140,16 +151,16 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Set vertex position attribute pointers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     // Set color attribute pointers
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
+    /*glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);*/
 
     // Set texture coordinate attribute pointers
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // Set texture parameters if using Clamp to Border option
     //float borderColor[] = { 1.0f, 1.0f, 0.0f, 1.0f };
@@ -197,7 +208,7 @@ int main()
     data = stbi_load("awesomeface.png", &width, &height, &nrChannels, 0);
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else {
@@ -208,8 +219,21 @@ int main()
 
     // Set up before utilizing uniforms
     ourShader.use();
-    glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0); // Manual setup
+    //glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0); // Manual setup
+    ourShader.setInt("texture1", 0);
     ourShader.setInt("texture2", 1);
+
+    // Adding transformation (practice)
+    /*glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::translate(trans, glm::vec3(1.0f, 1.0f, 0.0f));
+    vec = trans * vec;
+    std::cout << vec.x << vec.y << vec.z << std::endl;*/
+
+    // Adding transformation to container
+    /*glm::mat4 trans = glm::mat4(1.0f);
+    trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(0.0, 0.0, 1.0));
+    trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));*/
 
     // can safely unbind
     //glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -238,12 +262,19 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
 
+        // Create transformation
+        glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, glm::vec3(0.5f, -0.5f, 0.0f));
+        transform = glm::rotate(transform, (float)glfwGetTime(), glm::vec3(0.0f, 0.0f, 1.0f));
+
         // run program and draw object
         //glUseProgram(shaderProgram);
         ourShader.use();
+        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
 
-        glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
-        ourShader.setInt("texture2", 1);
+        /*glUniform1i(glGetUniformLocation(ourShader.ID, "texture1"), 0);
+        ourShader.setInt("texture2", 1);*/
 
         //// update uniform color
         //double timeValue = glfwGetTime();
