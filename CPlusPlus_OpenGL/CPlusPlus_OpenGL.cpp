@@ -15,6 +15,15 @@
 const unsigned int SCREEN_WIDTH = 800;
 const unsigned int SCREEN_HEIGHT = 600;
 
+// Camera configuration
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+// Camera movement speed
+float deltaTime = 0.0f; // Time between current frame and last frame
+float lastFrame = 0.0f; // Time of last frame
+
 int main()
 {
     // Initialization
@@ -347,9 +356,39 @@ int main()
         // rotates cube over time
 		//model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
 
-        glm::mat4 view = glm::mat4(1.0f);
+        /*glm::mat4 view = glm::mat4(1.0f);
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-        ourShader.setMat4("view", view);
+        ourShader.setMat4("view", view);*/
+        
+        // Keep track of delta time
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+        // Add the camera position
+        glm::mat4 view = glm::mat4(1.0f);
+        //glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+
+        // Set up camera direction
+        //glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+        //glm::vec3 cameraDirection = glm::normalize(cameraPos - cameraTarget);
+
+        // Set up camera right axis
+        //glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+        //glm::vec3 cameraRight = glm::normalize(glm::cross(up, cameraDirection));
+
+        // Set up up axis
+        //glm::vec3 cameraUp = glm::cross(cameraDirection, cameraRight);
+
+        // Draw circle for camera
+		/*const float radius = 10.0f;
+		float camX = sin(glfwGetTime()) * radius;
+        float camZ = cos(glfwGetTime()) * radius;*/
+
+		// Create view matrix
+		//view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+		ourShader.setMat4("view", view);
 
         // retrieve the matrix uniform locations
         //unsigned int modelLoc = glGetUniformLocation(ourShader.ID, "model");
@@ -414,6 +453,23 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
+
+    float cameraSpeed = 2.5f * deltaTime;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+		cameraPos += cameraSpeed * cameraFront; // Move camera forward
+	}
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+		cameraPos -= cameraSpeed * cameraFront; // Move camera backward
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+		cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed; // Move camera left
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed; // Move camera right
+	}
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
