@@ -24,6 +24,13 @@ glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 float deltaTime = 0.0f; // Time between current frame and last frame
 float lastFrame = 0.0f; // Time of last frame
 
+// Set mouse items
+float yaw = -90.0f;
+float pitch = 0.0f;
+float lastX = 400, lastY = 300;
+const float sensitivity = 0.1f; // Adjust mouse sensitivity;
+bool firstMouse = true; // First mouse movement
+
 int main()
 {
     // Initialization
@@ -54,6 +61,13 @@ int main()
         return -1;
     }
 
+    // Disable mouse cursor
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    // Listen for mouse events
+	glfwSetCursorPosCallback(window, mouse_callback);
+
+    // Enables non intersecting faces of objects
     glEnable(GL_DEPTH_TEST);
 
     Shader ourShader("3.3.vertex.glsl", "3.3.fragment.glsl");
@@ -470,6 +484,46 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 		cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed; // Move camera right
 	}
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+    if (firstMouse) {
+		lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; // y-coordinates range from bottom to top
+	lastX = xpos;
+    lastY = ypos;
+	
+    xoffset *= sensitivity;
+	yoffset *= sensitivity;
+
+	yaw += xoffset;
+	pitch += yoffset;
+
+	// constrain pitch to prevent camera flipping
+    if (pitch > 89.0f) {
+		pitch = 89.0f;
+    }
+
+	if (pitch < -89.0f) {
+        pitch = -89.0f;
+    }
+
+    // Camera direction vector
+    glm::vec3 direction;
+    /*direction.x = cos(glm::radians(yaw));
+    direction.y = sin(glm::radians(yaw));*/
+
+    direction.x = cos(glm::radians(yaw) * cos(glm::radians(pitch)));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+    cameraFront = glm::normalize(direction);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
