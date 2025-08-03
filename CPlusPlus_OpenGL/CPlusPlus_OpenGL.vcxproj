@@ -143,6 +143,8 @@
   <ItemGroup>
     <None Include="3.3.fragment.glsl" />
     <None Include="3.3.vertex.glsl" />
+    <None Include="light.fragment.glsl" />
+    <None Include="light.vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="awesomeface.png" />

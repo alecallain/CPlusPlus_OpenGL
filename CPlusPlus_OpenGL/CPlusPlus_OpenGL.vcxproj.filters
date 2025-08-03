@@ -43,6 +43,12 @@
     <None Include="3.3.fragment.glsl">
       <Filter>Source Files</Filter>
     </None>
+    <None Include="light.fragment.glsl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="light.vertex.glsl">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="container.jpg">
