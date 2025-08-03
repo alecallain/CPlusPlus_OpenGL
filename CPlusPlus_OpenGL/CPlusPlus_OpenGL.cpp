@@ -339,6 +339,11 @@ int main()
     // Main render loop
     while (!glfwWindowShouldClose(window))
     {
+        // Keep track of delta time
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
         // input
         processInput(window);
         
@@ -374,10 +379,7 @@ int main()
         view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
         ourShader.setMat4("view", view);*/
         
-        // Keep track of delta time
-		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
+        glm::mat4 projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 
         // Add the camera position
         glm::mat4 view = glm::mat4(1.0f);
@@ -522,17 +524,18 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
     direction.x = cos(glm::radians(yaw) * cos(glm::radians(pitch)));
     direction.y = sin(glm::radians(pitch));
     direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-
     cameraFront = glm::normalize(direction);
 }
 
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    fov -= (float)yoffset;
 
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
+    if (fov < 1.0f) {
+        fov = 1.0f;
+    }
+
+    if (fov > 45.0f) {
+        fov = 45.0f;
+    }
+}
